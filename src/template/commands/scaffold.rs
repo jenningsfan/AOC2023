@@ -9,11 +9,17 @@ use crate::Day;
 const MODULE_TEMPLATE: &str = r#"advent_of_code::solution!(DAY_NUMBER);
 
 pub fn part_one(input: &str) -> Option<u32> {
+    let input = parse(input);
     None
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
+    let input = parse(input);
     None
+}
+
+fn parse(input: &str) -> Vec<&str> {
+    input.split("\n").collect()
 }
 
 #[cfg(test)]
