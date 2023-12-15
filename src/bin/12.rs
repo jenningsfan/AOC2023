@@ -5,19 +5,26 @@ use itertools::Itertools;
 advent_of_code::solution!(12);
 
 fn get_possible_arangements(springs: Vec<char>) -> Vec<Vec<bool>> {
-    let possible: Vec<Vec<bool>> = vec![];
+    let mut possible: Vec<Vec<bool>> = vec![];
     let mut current_spring = vec![];
-
+    let mut  current_spring_chars = vec![];
     for (i, spring) in springs.iter().enumerate() {
         if *spring == '?' {
-            let mut broken_variant = current_spring.clone();
+            //current_spring_chars.push('.');
+            current_spring.push(true);
+
+            let mut broken_variant = current_spring_chars.clone();
             broken_variant.push('#');
-            broken_variant.append(&mut springs[i..springs.len()].to_owned());
+            broken_variant.append(&mut springs[i + 1..springs.len()].to_owned());
 
             possible.append(&mut get_possible_arangements(broken_variant));
+            current_spring_chars.push('.');
+
         }
         else {
-            if spring == '.' {
+            current_spring_chars.push(*spring);
+
+            if *spring == '.' {
                 current_spring.push(true);
             }
             else {
@@ -30,12 +37,12 @@ fn get_possible_arangements(springs: Vec<char>) -> Vec<Vec<bool>> {
     possible
 }
 
-fn fits_critera(springs: Vec<bool>, groups: Vec<u32>) -> bool {
+fn fits_critera(springs: &Vec<bool>, groups: Vec<u32>) -> bool {
     let mut current_group_len = 0;
     let mut current_group_index = 0;
 
     for spring in springs {
-        if spring == false {
+        if *spring == false {
             if groups[current_group_index] != current_group_len {
                 return false;
             }
@@ -61,7 +68,8 @@ fn fits_critera(springs: Vec<bool>, groups: Vec<u32>) -> bool {
 
 pub fn part_one(input: &str) -> Option<u32> {
     let input = parse(input);
-    dbg!(get_possible_arangements("???.###".chars().collect()));
+    dbg!(get_possible_arangements("???.###".chars().collect()).iter().map(|springs| fits_critera(dbg!(springs), vec![1, 1, 3])).filter(|result| *result).collect_vec());
+    dbg!(get_possible_arangements("?.?".chars().collect()));
     None
 }
 
