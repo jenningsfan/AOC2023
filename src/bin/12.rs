@@ -68,8 +68,8 @@ fn fits_critera(springs: &Vec<bool>, groups: Vec<u32>) -> bool {
 
 pub fn part_one(input: &str) -> Option<u32> {
     let input = parse(input);
-    dbg!(get_possible_arangements("???.###".chars().collect()).iter().map(|springs| fits_critera(dbg!(springs), vec![1, 1, 3])).filter(|result| *result).collect_vec());
-    dbg!(get_possible_arangements("?.?".chars().collect()));
+    dbg!(get_possible_arangements("#.#.###".chars().collect()).iter().map(|springs| fits_critera(dbg!(springs), vec![1, 1, 3])).filter(|result| *result).collect_vec());
+    //dbg!(get_possible_arangements("?.?".chars().collect()));
     None
 }
 
