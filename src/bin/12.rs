@@ -11,7 +11,7 @@ fn get_possible_arangements(springs: Vec<char>) -> Vec<Vec<bool>> {
     for (i, spring) in springs.iter().enumerate() {
         if *spring == '?' {
             //current_spring_chars.push('.');
-            current_spring.push(true);
+            current_spring.push(false);
 
             let mut broken_variant = current_spring_chars.clone();
             broken_variant.push('#');
@@ -25,10 +25,10 @@ fn get_possible_arangements(springs: Vec<char>) -> Vec<Vec<bool>> {
             current_spring_chars.push(*spring);
 
             if *spring == '.' {
-                current_spring.push(true);
+                current_spring.push(false);
             }
             else {
-                current_spring.push(false);
+                current_spring.push(true);
             }
         }
     }
@@ -69,6 +69,7 @@ fn fits_critera(springs: &Vec<bool>, groups: Vec<u32>) -> bool {
 pub fn part_one(input: &str) -> Option<u32> {
     let input = parse(input);
     dbg!(get_possible_arangements("#.#.###".chars().collect()).iter().map(|springs| fits_critera(dbg!(springs), vec![1, 1, 3])).filter(|result| *result).collect_vec());
+    dbg!(fits_critera(&vec![true, false, true, false, true, true, true], vec![1, 1, 3]));
     //dbg!(get_possible_arangements("?.?".chars().collect()));
     None
 }
