@@ -161,8 +161,8 @@ impl CategoryMap {
             let mut min_value = i64::MAX;
 
             for range in ranges {
-                //dbg!(range);
-                //dbg!(self.get_destination_ranges_for(range));
+                ////dbg!(range);
+                ////dbg!(self.get_destination_ranges_for(range));
                 min_value = min(min_value, self.get_destination_ranges_for(range).iter().map(|r| r.source_start).min().unwrap());
             }
 
@@ -191,7 +191,7 @@ impl CategoryMap {
     //             let min_from_this_range = range.iter().map(|r| r.source_start).min().unwrap();
     //             min_value = min(min_value, min_from_this_range);
 
-    //             //min_value = min(min_value, dbg!(range.source_start));
+    //             //min_value = min(min_value, //dbg!(range.source_start));
     //         }
 
     //         return min_value;
@@ -221,11 +221,13 @@ pub fn part_one(input: &str) -> Option<i64> {
 }
 
 pub fn part_two(input: &str) -> Option<i64> {
+    return None;
+    
     let (seeds, maps) = parse(input);
     let mut seeds_range: Vec<MapRange> = vec![];
 
-    //dbg!(maps[maps.len() - 1].get_destination_ranges_for(&MapRange { source_start: 46, source_end: 47, destination_offset: 0 }));
-    //dbg!(maps[4].get_destination_ranges_for(&MapRange { source_start: 74, source_end: 88, destination_offset: 0 }));
+    ////dbg!(maps[maps.len() - 1].get_destination_ranges_for(&MapRange { source_start: 46, source_end: 47, destination_offset: 0 }));
+    ////dbg!(maps[4].get_destination_ranges_for(&MapRange { source_start: 74, source_end: 88, destination_offset: 0 }));
     
     for i in (0..seeds.len()).step_by(2) {
         seeds_range.push(MapRange { 
@@ -270,7 +272,7 @@ pub fn part_two(input: &str) -> Option<i64> {
 
     //     let test_map = CategoryMap {map: test_ranges};
         
-    //     dbg!(test_map.get_destination_ranges_for(
+    //     //dbg!(test_map.get_destination_ranges_for(
     //         &MapRange{
     //             source_start: 62, 
     //             source_end: 89,
@@ -278,7 +280,7 @@ pub fn part_two(input: &str) -> Option<i64> {
     //         }
     //     ));
 
-    //dbg!(&seeds_range);
+    ////dbg!(&seeds_range);
     
     // let mut maps_test = maps.clone();
     // let test_seed = vec![MapRange { 
@@ -288,7 +290,7 @@ pub fn part_two(input: &str) -> Option<i64> {
     // }];
 
     // for i in 0..maps.len() {
-    //     dbg!(maps[i].get_min_values_from_ranges(&maps_test, &test_seed));
+    //     //dbg!(maps[i].get_min_values_from_ranges(&maps_test, &test_seed));
     //     maps_test.remove(0);
     // }
     // panic!("stop");
@@ -299,7 +301,7 @@ pub fn part_two(input: &str) -> Option<i64> {
     //     destination_offset: 0,
     // }]);
 
-    //dbg!(maps[6].get_destination_ranges_for(&MapRange { source_start: 46, source_end: 57, destination_offset: 0 }));
+    ////dbg!(maps[6].get_destination_ranges_for(&MapRange { source_start: 46, source_end: 57, destination_offset: 0 }));
 
     Some(result)
 }

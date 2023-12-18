@@ -87,9 +87,9 @@ pub fn part_one(input: &str) -> Option<usize> {
             .filter(|result| *result).count();
     }
 
-    //dbg!(get_possible_arangements("..#...#...###.".chars().collect()));
+    ////dbg!(get_possible_arangements("..#...#...###.".chars().collect()));
 
-    // dbg!(fits_critera(&vec![ false,
+    // //dbg!(fits_critera(&vec![ false,
     //     true,
     //     true,
     //     true,
@@ -101,7 +101,7 @@ pub fn part_one(input: &str) -> Option<usize> {
     //     true,
     //     false,
     //     true,], &vec![3, 2, 1]));
-    //dbg!(get_possible_arangements("?.?".chars().collect()));
+    ////dbg!(get_possible_arangements("?.?".chars().collect()));
     // let arrangements = get_possible_arangements("?###????????".chars().collect());
     // let results = arrangements.clone().iter()
     //     .map(|springs| fits_critera(springs, &vec![3, 2, 1]))
@@ -109,7 +109,7 @@ pub fn part_one(input: &str) -> Option<usize> {
 
     // for i in 0..arrangements.len() {
     //     if results[i] == true {
-    //         dbg!(&arrangements[i]);
+    //         //dbg!(&arrangements[i]);
     //     }
     // }
 

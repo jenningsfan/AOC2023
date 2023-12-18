@@ -35,7 +35,7 @@ fn parse(input: &str) -> Vec<Vec<char>> {
     let (mut row, mut col) = (start_row, start_col);
     let mut last_dir = None;
     pipes[row][col] = 'S';
-    dbg!(input[row][col]);
+    //dbg!(input[row][col]);
     assert!(input[row][col] == 'S');
     let south = pipe_lookup.get(&input[row + 1][col]).unwrap_or(&[false, false, false, false]);
     let east = pipe_lookup.get(&input[row][col + 1]).unwrap_or(&[false, false, false, false]);
@@ -65,7 +65,7 @@ fn parse(input: &str) -> Vec<Vec<char>> {
     loop {
         let pipe = input[row][col];
         pipes[row][col] = pipe;
-        //dbg!(pipe);
+        ////dbg!(pipe);
         let mut directions = pipe_lookup.get(&pipe).unwrap().clone();
         directions[last_dir.unwrap()] = false;
         

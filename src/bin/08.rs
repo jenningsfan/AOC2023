@@ -45,11 +45,13 @@ pub fn part_one(input: &str) -> Option<u32> {
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
+    return None;
+
     let (directions, nodes) = parse(input);
 
     let mut current: Vec<&Node> = nodes.values().filter(|node| node.name.chars().last().unwrap() == 'A').collect();
     let mut nodes_visited = 0;
-    dbg!(&current);
+    //dbg!(&current);
     for direction in directions.chars().cycle() {
         nodes_visited += 1;
 

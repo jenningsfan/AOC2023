@@ -133,7 +133,7 @@ pub fn part_two(input: &str) -> Option<u32> {
         total += rank * hand.bid;
     }
 
-    dbg!(Hand::from_input("QJKQ2 0", true));
+    //dbg!(Hand::from_input("QJKQ2 0", true));
     
     Some(total)
 }
