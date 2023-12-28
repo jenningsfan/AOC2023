@@ -97,38 +97,13 @@ fn create_boundary_grid(instructions: &Vec<Direction>) -> Vec<Vec<bool>> {
     grid
 }
 
-fn is_anything_above(grid: &Vec<Vec<bool>>, row: usize, col: usize) -> bool {
-    for i in 0..row {
-        if grid[i][col] {
-            return true;
-        }
-    }
-
-    false
-}
-
-fn is_corner(grid: &Vec<Vec<bool>>, row: usize, col: usize) -> bool {
-    (grid[row + 1][col] || grid[row - 1][col]) 
-        && (grid[row][col + 1] || grid[row][col - 1])
-        && grid[row][col]
-}
-
-fn should_switch_for_section(grid: &Vec<Vec<bool>>, row1: usize, col1: usize, row2: usize, col2: usize) -> bool{
-    !(
-        ((grid[row1 - 1][col1] && grid[row1][col1] && grid[row1][col1 + 1]) && (grid[row2 - 1][col2] && grid[row2][col2] && grid[row2][col2 - 1]))
-        || ((grid[row1 + 1][col1] && grid[row1][col1] && grid[row1][col1 + 1]) && (grid[row2 + 1][col2] && grid[row2][col2] && grid[row2][col2 - 1]))
-    )
-}
-
 #[derive(Debug, PartialEq, Eq)]
 enum ColourMode {
     Off,
     On,
-    JustTurnedOff,
 }
 
 fn colour_inside(grid: &mut Vec<Vec<bool>>) {
-    let grid_plan = grid.clone();
     let mut prev_row = &vec![];
 
     for (row_i, row) in grid.iter_mut().enumerate() {
@@ -162,18 +137,6 @@ fn colour_inside(grid: &mut Vec<Vec<bool>>) {
             }
         }
         prev_row = row;
-    }
-}
-
-fn print_grid(grid: &Vec<Vec<bool>>) {
-    for row in grid {
-        for col in row {
-            match col {
-                &true => print!("#"),
-                &false => print!("."),
-            };
-        }
-        println!();
     }
 }
 
