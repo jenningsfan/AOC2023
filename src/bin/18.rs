@@ -120,38 +120,48 @@ fn should_switch_for_section(grid: &Vec<Vec<bool>>, row1: usize, col1: usize, ro
     )
 }
 
+#[derive(Debug, PartialEq, Eq)]
+enum ColourMode {
+    Off,
+    On,
+    JustTurnedOff,
+}
+
 fn colour_inside(grid: &mut Vec<Vec<bool>>) {
     let grid_plan = grid.clone();
+    let mut prev_row = &vec![];
 
     for (row_i, row) in grid.iter_mut().enumerate() {
-        let plan = row.clone();
-        let mut dug = row.clone();
-        let mut filling = false;
-        let mut switches = 0;
-        let mut last_switch = 0;
+        if row_i == 0 {
+            continue;
+        }
+        let unaltered = row.clone();
+        let mut colour_mode = ColourMode::Off;
 
-        for col_i in 1..row.len() - 1 { 
-            if plan[col_i] != plan[col_i + 1] {
-                last_switch = col_i;
+        for col_i in 2..row.len() - 1 {
+            if !unaltered[col_i - 2] && unaltered[col_i - 1] && !unaltered[col_i] {
+                // FTF
+                if colour_mode == ColourMode::Off {
+                    colour_mode = ColourMode::On;
+                }
+                else if colour_mode == ColourMode::On {
+                    colour_mode = ColourMode::Off;
+                }
             }
-            if plan[col_i] && !plan[col_i + 1] && should_switch_for_section(&grid_plan, row_i, last_switch, row_i, col_i) {
-                filling = !filling;
-                switches += 1;
-                last_switch = col_i;
+            else if !unaltered[col_i] && unaltered[col_i - 1] && unaltered[col_i - 2] {
+                // we're false and two behind us are true
+                if prev_row[col_i] {
+                    colour_mode = ColourMode::On;
+                }
+                else {
+                    colour_mode = ColourMode::Off;
+                }
             }
-            if !row[col_i] && filling   {
-                dug[col_i] = true;
+            if colour_mode == ColourMode::On {
+                row[col_i] = true;
             }
         }
-
-        if switches % 2 != 0 {
-            for i in 0..last_switch {
-                row[i] = dug[i];
-            }
-        }
-        else {
-            *row = dug;
-        }
+        prev_row = row;
     }
 }
 
@@ -171,10 +181,9 @@ pub fn part_one(input: &str) -> Option<usize> {
     let input: (Vec<Direction>, Vec<&str>) = parse(input).into_iter().unzip();
     let input = input.0;
     let mut grid = create_boundary_grid(&input);
-    print_grid(&grid);
+    
     colour_inside(&mut grid);
-    println!();
-    print_grid(&grid);
+
     let result: usize = grid.iter()
         .map(|row| row.iter().filter(|item| **item).count())
         .sum();
