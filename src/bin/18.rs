@@ -1,3 +1,5 @@
+use std::vec;
+
 advent_of_code::solution!(18);
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -19,77 +21,29 @@ impl Direction {
         match self {
             Self::Up(steps) => {
                 Position {
-                    row: start_pos.row.saturating_sub(*steps),
+                    row: start_pos.row - steps,
                     col: start_pos.col,
                 }
             },
             Self::Down(steps) => {
                 Position {
-                    row: start_pos.row + *steps,
+                    row: start_pos.row + steps,
                     col: start_pos.col,
                 }
             },
             Self::Left(steps) => {
                 Position {
                     row: start_pos.row,
-                    col: start_pos.col.saturating_sub(*steps),
+                    col: start_pos.col - steps,
                 }
             },
             Self::Right(steps) => {
                 Position {
                     row: start_pos.row,
-                    col: start_pos.col + *steps,
+                    col: start_pos.col + steps,
                 }
             },
         }
-    }
-}
-
-fn colour_col(grid: &mut Vec<Vec<bool>>, row: isize, col: usize) {
-    if row >= 0 {
-        let row = row as usize;
-        if let Some(element) = grid.get_mut(row) {
-            colour_row(element, col as isize);
-        }
-        else {
-            grid.push(vec![]); // it should be fine like this
-            colour_row(grid.last_mut().unwrap(), col as isize);
-        }
-    }
-    else {
-        grid.insert(0, vec![]); // it should be fine like this
-        colour_row(&mut grid[0], col as isize);
-    }
-}
-
-fn colour_row(row: &mut Vec<bool>, index: isize) {
-    if row.len() == 0 && index == 0 {
-        row.push(true);
-        return;
-    }
-    
-    if index >= 0 {
-        let index = index as usize;
-        if let Some(element) = row.get_mut(index) {
-            *element = true;
-        }
-        else {
-            let to_add = index - row.len();
-            
-            for _ in 0..to_add {
-                row.push(false);
-            }
-            row.push(true);
-        }
-    }
-    else {
-        let index = -index - 1;
-
-        for _ in 0..index {
-            row.insert(0, false);
-        }
-
-        row.insert(0, true);
     }
 }
 
@@ -104,27 +58,36 @@ fn colour_line_grid(grid: &mut Vec<Vec<bool>>, line: &Direction, pos: &Position)
     for step in 1..steps + 1 {
         match line {
             Direction::Right(_) => {
-                colour_row(&mut grid[pos.row], (pos.col + step) as isize);
+                grid[pos.row][pos.col + step] = true;
             },
             Direction::Left(_) => {
-                colour_row(&mut grid[pos.row], pos.col as isize - step as isize);
+                grid[pos.row][pos.col - step] = true;
             },
             Direction::Up(_) => {
-                colour_col(grid, pos.row as isize - step as isize, pos.col);
+                grid[pos.row - step][pos.col] = true;
             },
             Direction::Down(_) => {
-                colour_col(grid, pos.row as isize + step as isize, pos.col);
+                grid[pos.row + step][pos.col] = true;
             },
         };
     }
 }
 
 fn create_boundary_grid(instructions: &Vec<Direction>) -> Vec<Vec<bool>> {
-    let mut grid = vec![vec![true]];
+    let mut grid = vec![];
+
+    for r in 0..1000 {
+        grid.push(vec![]);
+        for _ in 0..1000 {
+            grid[r].push(false);
+        }
+    }
+
     let mut position = Position {
-        row: 0,
-        col: 0,
+        row: grid.len() / 2,
+        col: grid[0].len() / 2,
     };
+    grid[position.row][position.col] = true;
 
     for instruction in instructions {
         colour_line_grid(&mut grid, instruction, &position);
@@ -134,19 +97,73 @@ fn create_boundary_grid(instructions: &Vec<Direction>) -> Vec<Vec<bool>> {
     grid
 }
 
-fn colour_inside(grid: &mut Vec<Vec<bool>>) {
-    for row in grid {
-        let plan = row.clone();
-        let mut filling = false;
+fn is_anything_above(grid: &Vec<Vec<bool>>, row: usize, col: usize) -> bool {
+    for i in 0..row {
+        if grid[i][col] {
+            return true;
+        }
+    }
 
-        for i in 0..row.len() - 1{
-            if plan[i] && !plan[i + 1] {
-                filling = !filling;
+    false
+}
+
+fn is_corner(grid: &Vec<Vec<bool>>, row: usize, col: usize) -> bool {
+    (grid[row + 1][col] || grid[row - 1][col]) 
+        && (grid[row][col + 1] || grid[row][col - 1])
+        && grid[row][col]
+}
+
+fn should_switch_for_section(grid: &Vec<Vec<bool>>, row1: usize, col1: usize, row2: usize, col2: usize) -> bool{
+    !(
+        ((grid[row1 - 1][col1] && grid[row1][col1] && grid[row1][col1 + 1]) && (grid[row2 - 1][col2] && grid[row2][col2] && grid[row2][col2 - 1]))
+        || ((grid[row1 + 1][col1] && grid[row1][col1] && grid[row1][col1 + 1]) && (grid[row2 + 1][col2] && grid[row2][col2] && grid[row2][col2 - 1]))
+    )
+}
+
+fn colour_inside(grid: &mut Vec<Vec<bool>>) {
+    let grid_plan = grid.clone();
+
+    for (row_i, row) in grid.iter_mut().enumerate() {
+        let plan = row.clone();
+        let mut dug = row.clone();
+        let mut filling = false;
+        let mut switches = 0;
+        let mut last_switch = 0;
+
+        for col_i in 1..row.len() - 1 { 
+            if plan[col_i] != plan[col_i + 1] {
+                last_switch = col_i;
             }
-            if !row[i] && filling {
-                row[i] = true;
+            if plan[col_i] && !plan[col_i + 1] && should_switch_for_section(&grid_plan, row_i, last_switch, row_i, col_i) {
+                filling = !filling;
+                switches += 1;
+                last_switch = col_i;
+            }
+            if !row[col_i] && filling   {
+                dug[col_i] = true;
             }
         }
+
+        if switches % 2 != 0 {
+            for i in 0..last_switch {
+                row[i] = dug[i];
+            }
+        }
+        else {
+            *row = dug;
+        }
+    }
+}
+
+fn print_grid(grid: &Vec<Vec<bool>>) {
+    for row in grid {
+        for col in row {
+            match col {
+                &true => print!("#"),
+                &false => print!("."),
+            };
+        }
+        println!();
     }
 }
 
@@ -154,8 +171,10 @@ pub fn part_one(input: &str) -> Option<usize> {
     let input: (Vec<Direction>, Vec<&str>) = parse(input).into_iter().unzip();
     let input = input.0;
     let mut grid = create_boundary_grid(&input);
-    dbg!(&grid);
+    print_grid(&grid);
     colour_inside(&mut grid);
+    println!();
+    print_grid(&grid);
     let result: usize = grid.iter()
         .map(|row| row.iter().filter(|item| **item).count())
         .sum();
