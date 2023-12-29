@@ -32,8 +32,6 @@ fn has_reflection_on_line(pattern: &Vec<u32>, line: usize) -> usize {
 }
 
 pub fn part_one(input: &str) -> Option<usize> {
-    return None;
-
     let input = parse(input);
     let mut total = 0;
     //dbg!(&input[2]);
